@@ -1,5 +1,5 @@
 import './App.css';
-import { Container, Col, Row, Button } from 'react-bootstrap';
+import { Container, Col, Row, Table } from 'react-bootstrap';
 import { ethers } from "ethers";
 import { useEffect, useState } from 'react';
 import useInterval from './hooks/useInterval';
@@ -17,22 +17,30 @@ function App() {
     }
   }, 1000);
 
+  // When new block detected, query for new block and update `blocks`
   useEffect(() => {
     async function getNewBlock() {
       console.log("Inside getNewBlock. Block = ", currentBlockNumber);
       if (currentBlockNumber) {
         let newBlock = await provider.getBlock(currentBlockNumber);
-        blocks.push(newBlock);
-        setBlocks(blocks);
+        console.log(newBlock);
+        setBlocks(oldBlocks => [newBlock, ...oldBlocks]);
       }
     }
     getNewBlock();
   }, [currentBlockNumber]);
 
   let blocksJsx = blocks.map((block) => 
-    <div key={block.number}>
-      <div>Block Number: {block.number}</div>
-    </div>
+    // <div key={block.number}>
+      // <div>Block Number: {block.number}</div>
+    // </div>
+    <tr>
+      <td>{block.number}</td>
+      <td>{new Date(block.timestamp * 1000).toISOString()}</td>
+      <td>{block.transactions.length}</td>
+      <td>{block.gasLimit.toString()}</td>
+      <td>{block.gasUsed.toString()}</td>
+    </tr>
   );
 
   return (
@@ -40,7 +48,20 @@ function App() {
       <Row>
         <Col>
           <h1>Rinkeby Block Explorer</h1>
-          {blocksJsx}
+          <Table hover>
+            <thead>
+              <tr>
+                <th>Block #</th>
+                <th>Time</th>
+                <th>Tx Count</th>
+                <th>Gas Limit</th>
+                <th>Gas Used</th>
+              </tr>
+            </thead>
+            <tbody>
+              {blocksJsx}
+            </tbody>
+          </Table>
         </Col>
       </Row>
     </Container>

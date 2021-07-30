@@ -1,0 +1,13 @@
+#blockchain {
+  display: flex;
+  flex-direction: column-reverse
+}
+
+.table {
+  color: chartreuse;
+}
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+  color:white;
+  background-color: rgba(53, 206, 22, 0.349);
+}
