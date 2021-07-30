@@ -31,10 +31,7 @@ function App() {
   }, [currentBlockNumber]);
 
   let blocksJsx = blocks.map((block) => 
-    // <div key={block.number}>
-      // <div>Block Number: {block.number}</div>
-    // </div>
-    <tr>
+    <tr key={block.number}>
       <td>{block.number}</td>
       <td>{new Date(block.timestamp * 1000).toISOString()}</td>
       <td>{block.transactions.length}</td>
