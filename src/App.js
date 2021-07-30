@@ -3,6 +3,7 @@ import { Container, Col, Row, Table } from 'react-bootstrap';
 import { ethers } from "ethers";
 import { useEffect, useState } from 'react';
 import useInterval from './hooks/useInterval';
+import { BrowserRouter as Router, Link } from "react-router-dom";
 
 function App() {
   const provider = new ethers.providers.JsonRpcProvider("https://rinkeby.infura.io/v3/6e758ef5d39a4fdeba50de7d10d08448");
@@ -20,10 +21,8 @@ function App() {
   // When new block detected, query for new block and update `blocks`
   useEffect(() => {
     async function getNewBlock() {
-      console.log("Inside getNewBlock. Block = ", currentBlockNumber);
       if (currentBlockNumber) {
         let newBlock = await provider.getBlock(currentBlockNumber);
-        console.log(newBlock);
         setBlocks(oldBlocks => [newBlock, ...oldBlocks]);
       }
     }
@@ -32,7 +31,7 @@ function App() {
 
   let blocksJsx = blocks.map((block) => 
     <tr key={block.number}>
-      <td>{block.number}</td>
+      <td><Link to={`/block/${block.number}`}>{block.number}</Link></td>
       <td>{new Date(block.timestamp * 1000).toISOString()}</td>
       <td>{block.transactions.length}</td>
       <td>{block.gasLimit.toString()}</td>
@@ -41,27 +40,30 @@ function App() {
   );
 
   return (
-    <Container>
-      <Row>
-        <Col>
-          <h1>Rinkeby Block Explorer</h1>
-          <Table hover>
-            <thead>
-              <tr>
-                <th>Block #</th>
-                <th>Time</th>
-                <th>Tx Count</th>
-                <th>Gas Limit</th>
-                <th>Gas Used</th>
-              </tr>
-            </thead>
-            <tbody>
-              {blocksJsx}
-            </tbody>
-          </Table>
-        </Col>
-      </Row>
-    </Container>
+    <Router>
+      <Container>
+        <Row>
+          <Col>
+            <h1>Rinkeby Block Explorer</h1>
+            <Table hover>
+              <thead>
+                <tr>
+                  <th>Block #</th>
+                  <th>Time</th>
+                  <th>Tx Count</th>
+                  <th>Gas Limit</th>
+                  <th>Gas Used</th>
+                </tr>
+              </thead>
+              <tbody>
+                {blocksJsx}
+              </tbody>
+            </Table>
+          </Col>
+        </Row>
+      </Container>
+    </Router>
+    
   );
 }
 
